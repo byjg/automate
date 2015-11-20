@@ -1,0 +1,3 @@
+#PLUGIN Check if memcached is running
+
+ps ax | grep memcached | grep -v grep
