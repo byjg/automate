@@ -11,7 +11,8 @@ Automate can you to run scripts called "plugin" across a multiple servers.
 The first step is to install 'automate.sh' 
 
 ```
-curl -sS SERVER > /usr/local/bin/automate
+curl -sS https://raw.githubusercontent.com/byjg/automate/master/automate.sh > /usr/local/bin/automate
+chmod a+x /usr/local/bin/automate
 ```
 
 ### Define the servers list
