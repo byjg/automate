@@ -77,7 +77,9 @@ do
 
 		( [ -z "$EXECID" ] || [ "$EXECID" = "ALL" ] || [ "$EXECID" = "$ID" ] ) && \
 		scp -q /tmp/automatetmp $FULLSERVER:/tmp/automatesrv && \
-		ssh $FULLSERVER /tmp/automatesrv
+		ssh $FULLSERVER /tmp/automatesrv || \
+		echo "Not executed."
+
 	else
 		echo "Ignored."
 	fi
