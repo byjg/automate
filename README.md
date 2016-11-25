@@ -1,10 +1,11 @@
-# Automate ByJG
+# Automate ByJG 1.1.0
 
-Native bash script for automate tasks in a multiple servers
+Native bash script for running scripts across a multiple servers
 
 ## How it works?
 
-Automate can you to run scripts called "plugin" across a multiple servers. 
+Automate run scripts called "plugins" across a multiple servers. 
+Each plugin is created in your local machine and the it is spreaded to all the servers. 
 
 ### Install
 
@@ -20,14 +21,15 @@ chmod a+x /usr/local/bin/automate
 Once installed the 'automate' you need to create the 'IPs' file with a list of all servers you want to automate. 
 
 ```
-10.10.1.1:2200
-10.10.1.2
+10.10.1.1:2200   COMMENTS OR GROUP
+10.10.1.2   MORE COMMENTS OR GROUP
 ;10.10.1.3
-ubuntu@10.10.1.4
+ubuntu@10.10.1.4 
 server.name.com:1100
 ```
 
-Comments start with a ';'. This file cannot have white spaces.
+Comments start with a ';'. This file cannot have white spaces. The comments after the server are ignored. 
+They can be used as filter 
 
 ### Create your first PLUGIN
 
@@ -65,4 +67,21 @@ automate showip
 
 where 'showip' is the name of the plugin.
 
+### Running a specific line in the IPs file
+
+```bash
+automate showip 3
+```
+
+### Running a specific line matching with the comment in the file
+
+```bash
+automate showip GROUP
+```
+
+### Running ALL servers and passing EXTRA parameters
+
+```bash
+automate showip ALL extra1 extra2
+```
 
