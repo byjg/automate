@@ -84,10 +84,10 @@ do
 
     # Execute PLUGIN
     echo 
-    echo "Running Server: " `grep $LINE IPs`
+    echo "Running Server: " `grep $LINE ${WORKDIR}/IPs`
     echo 
     echo "#!/bin/bash"         >  /tmp/automatetmp
-    echo "ID='`grep $LINE IPs`'" >> /tmp/automatetmp
+    echo "ID='`grep $LINE ${WORKDIR}/IPs`'" >> /tmp/automatetmp
     echo "USER='$USER'"        >> /tmp/automatetmp
     echo "SERVER='$SERVER'"    >> /tmp/automatetmp
     echo "PORT='$PORT'"        >> /tmp/automatetmp
