@@ -1,30 +1,37 @@
 #!/usr/bin/env bash
 #
-# Automate ByJG  1.1.0
+# Automate ByJG
 ############################################################
 
 echo "----------------------------------------------"
-echo "Automate ByJG v1.1.0"
+echo "Automate ByJG v1.1.1"
 echo "Automate run scripts in a multiple servers"
 echo "----------------------------------------------"
 echo 
 
-if [ ! -f "IPs" ]
+# ---
+WORKDIR="${AUTOMATE_WORKDIR}"
+if [ -z "$WORKDIR" ]
+then
+    WORKDIR="."
+fi
+
+# ---
+if [ ! -f "${WORKDIR}/IPs" ]
 then
     echo "You need to create a file called 'IPs' with the server names and IPs of the server you want to execute "
     echo
     exit 1;
 fi
 
-
-PLUGIN=`echo $1 | cut -d. -f1`".plugin"
+PLUGIN=$WORKDIR/${1%.*}.plugin
 EXECID=$2
 EXTRA1=$3
 EXTRA2=$4
 EXTRA3=$5
 
 # Check if Plugin was passed
-if [ ! -r $PLUGIN ]
+if [ -z "$1" ] || [ ! -r $PLUGIN ]
 then
     echo "Usage:"
     echo "   automate PLUGIN-NAME [server-number] [extra1] [extra2] [extra3]"
@@ -34,9 +41,9 @@ then
     echo "   extra-n: Extra arguments passed to the plugin script named EXTRA1, EXTRA2 and EXTRA3"
     echo
     echo "Available Scripts:"
-    for lista in `ls *.plugin`; do
-        pluginame=`echo $lista | cut -d. -f1`
-        echo "   $pluginame: "`cat $lista | grep '#PLUGIN' | cut -b 9-`
+    for lista in `ls $WORKDIR/*.plugin`; do
+        pluginame=${lista%.*}
+        echo "   ${pluginame##*/}: "`cat $lista | grep '#PLUGIN' | cut -b 9-`
     done
     echo
     exit
@@ -56,7 +63,7 @@ do
     fi
 
     ID=`expr $ID + 1`
-done <IPs;
+done <${WORKDIR}/IPs;
 
 
 # Execute

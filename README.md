@@ -1,4 +1,4 @@
-# Automate ByJG 1.1.0
+# Automate ByJG 1.1.1
 
 Native bash script for running scripts across a multiple servers
 
@@ -83,5 +83,14 @@ automate showip GROUP
 
 ```bash
 automate showip ALL extra1 extra2
+```
+
+### Setting up environment variable
+
+Automate by default locate the "*.plugin" files at your current directory. You can specify a directory by setting up the
+environment variable `AUTOMATE_WORKDIR` like this:
+
+```
+AUTOMATE_WORKDIR=/opt/plugindir
 ```
 
