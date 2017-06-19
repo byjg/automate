@@ -1,0 +1,6 @@
+#PLUGIN Test Copy
+#COPY-BEFORE IPs.dist $REMOTESERVER:/tmp
+#COPY-AFTER $REMOTESERVER:/tmp/automatesrv /tmp/seescript
+#ONLY-IF-MATCH casa
+
+cat /tmp/IPs.dist

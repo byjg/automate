@@ -1,13 +1,22 @@
 # Automate ByJG 2.0.0
 
-Native bash script for running scripts across a multiple servers
+A *very* simple script management for automate tasks and run scripts (recipes)
+across a multiple servers
 
 ## How it works?
 
 Automate run scripts called "recipes" across a multiple servers. 
-Each recipe is created in your local machine and the it is spreaded to all the servers. 
+Each recipe is created in your local machine and the it is spreaded to all the servers.
 
-### Install
+## Why this is better than ansible, chef and others?
+
+The answer is not "BETTER THAN SOMETHING" but "DIFFERENT WAY TO DO THINGS".
+Ansible and Chef have your own syntax. You have to learn it. 
+Automate just use BASH SCRIPT and there is no other commands. 
+
+During this document we'll highlighting the differences and similarity with the ansible and chef. 
+
+## Install
 
 The first step is to install 'automate.sh' 
 
@@ -16,9 +25,17 @@ curl -sS https://raw.githubusercontent.com/byjg/automate/master/automate.sh > /u
 chmod a+x /usr/local/bin/automate
 ```
 
-### Define the servers list
+## Define the servers list
 
-Once installed the 'automate' you need to create the 'IPs' file with a list of all servers you want to automate. 
+Once installed the 'automate' you need to create the 'IPs' file with a list of all servers you want to automate.
+ 
+Each line must have on IP following the format below:
+
+```
+[username@]IP[:PORT]   THE-SERVER-NAME-WITHOUT-SPACE
+```
+
+Example:
 
 ```
 10.10.1.1:2200        connection-name
@@ -29,10 +46,55 @@ server.name.com:1100  with-port
 
 ```
 
-Comments start with a ';'. This file cannot have white spaces. The comments after the server are ignored. 
-They can be used as filter 
+Comments starts with a ';'. This file cannot have white spaces. The comments after the server are ignored. 
+They can be used as filter
 
-### Create your first RECIPE
+It is important named carefully because you can filter the execution by this name.
+
+#### Note for Ansible Users
+
+Ansible have the inventory and groups of servers. 
+
+For example, the ansible inventory is:
+
+```
+[webservers]
+www1.example.com
+www2.example.com
+
+[dbservers]
+db0.example.com
+db1.example.com
+```
+
+and the AUTOMATE IPs list is:
+
+```
+www1.example.com    webservers
+www2.example.com    webservers
+db0.example.com     dbservers
+db1.example.com     dbservers
+```
+
+In fact automate comments is more flexible when we want to mix
+different groups. For example, imagine we have webservers and dbservers for
+homolog and live systems? Using automate we could do it:
+
+```
+www1.example.com    live-webservers
+www2.example.com    test-webservers
+db0.example.com     live-dbservers
+db1.example.com     test-dbservers
+```
+
+and we could call the recipe like:
+
+```
+automate recipe live
+automate recipe webservers
+```
+
+## Create your first RECIPE
 
 A recipe is a regular bash script with the extension ".recipe". This file must reside inside your current folder
 alongside with the IPs file.
@@ -46,8 +108,7 @@ echo "$ID: $USER $SERVER $PORT"
 lsb_release --all
 ```
 
-Note that the first line is nice to have the comment '#RECIPE' at the very first line. This will be showed when listing all
-recipes. 
+Note that the line started with "#RECIPE" is a comment of your recipe.
 
 Each script also have five pre-defined variable:
 * $ID: The server ID is the position of the server in the IPs file.
@@ -58,7 +119,52 @@ Each script also have five pre-defined variable:
 * $EXTRA2: The extra parameter 2
 * $EXTRA3: The extra parameter 3
 
-### Running
+#### Note for Ansible Users
+
+The Automate Recipe looks like to a Ansible Playbook. Ansible Playbook are a YAML file and are more rich 
+with a lot of useful plugins. Some functions like start a service, notify commands, etc are well defined. 
+As stated in the ansible documentation: "Reading an ansible playbook is easy". Automate recipes are just scripts. 
+Do what you scripted. There is no magic.
+
+## RECIPE commands
+
+The recipe is PURE bash with some comments and environment variables pre-defined.
+
+The commands are:
+
+### #RECIPE comment
+
+It is used only for document your recipe. The syntax is:
+
+```
+#RECIPE This is the comment
+
+(Your recipe here)
+```
+
+### #COPY-BEFORE local remote
+
+Copy-Before will copy a file or directory using "scp" **before** start the recipe. Use the variable 
+$REMOTESERVER to define the remote server. 
+
+```
+#COPY-BEFORE locafile $REMOTESERVER:remotepath
+```
+
+### #COPY-AFTER local remote
+
+Copy-After will copy a file or directory using "scp" **after** the end of the recipe execution.
+
+```
+#COPY-AFTER $REMOTESERVER:remotefile localfile
+```
+
+### #ONLY-IF-MATCH string
+
+This recipe only will be executed if the current server match with the string. 
+This is ideal for avoid running scripts in other servers. 
+
+## Running
 
 To run just type:
 
@@ -67,12 +173,6 @@ automate showip
 ```
 
 where 'showip' is the name of the recipe.
-
-### Running a specific line in the IPs file
-
-```bash
-automate showip 3
-```
 
 ### Running a specific line matching with the comment in the file
 

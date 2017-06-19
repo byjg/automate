@@ -70,35 +70,67 @@ done <${WORKDIR}/IPs;
 for LINE in ${TARGET_SERVER[@]}
 do
     # Get Server NAME and PORT
-    FULLSERVER=`echo $LINE | cut -f1 -d ':'`
+    REMOTESERVER=`echo $LINE | cut -f1 -d ':'`
     PORT=`echo $LINE | awk -F':' '{ print $2 }'`
     if [ -z "$PORT" ]
     then
         PORT=22
     fi
-    USER=`echo $FULLSERVER | cut -f1 -d '@'`
+    USER=`echo $REMOTESERVER | cut -f1 -d '@'`
     if [ ! -z "$USER" ]
     then
-        SERVER=`echo $FULLSERVER | cut -f2 -d '@'`
+        SERVER=`echo $REMOTESERVER | cut -f2 -d '@'`
     fi
 
+    COPYBEFORE=`cat ${RECIPE} | grep -i "#COPY-BEFORE" | cut -c14-`
+    if [ -z "$COPYBEFORE" ]; then
+        COPYBEFORE="echo"
+    else
+        COPYBEFORE="echo 'Copying files...' && scp $COPYBEFORE && echo 'End copy' && echo"
+    fi
+
+    COPYAFTER=`cat ${RECIPE} | grep -i "#COPY-AFTER" | cut -c13-`
+    if [ -z "$COPYBEFORE" ]; then
+        COPYAFTER="echo"
+    else
+        COPYAFTER="echo && echo 'Copying files...' && scp $COPYAFTER && echo 'End copy'"
+    fi
+
+    ID=`grep $LINE ${WORKDIR}/IPs | cut -d" " -f2- | tr -d '[:space:]'`
+
+
+    echo
+    ONLYIFMATCH=`cat ${RECIPE} | grep -i "#ONLY-IF-MATCH" | cut -c16-`
+    if [ -z "$ONLYIFMATCH" ]; then
+        ONLYIFMATCH="$ID"
+    fi
+    if [[ "$ID" == *"$ONLYIFMATCH"* ]]; then
+        echo "Running Server: " `grep $LINE ${WORKDIR}/IPs`
+    else
+        echo "Skipping Server: " `grep $LINE ${WORKDIR}/IPs`
+        echo
+        continue
+    fi
+    echo
+
     # Execute RECIPE
-    echo 
-    echo "Running Server: " `grep $LINE ${WORKDIR}/IPs`
-    echo 
+    echo
     echo "#!/bin/bash"         >  /tmp/automatetmp
-    echo "ID='`grep $LINE ${WORKDIR}/IPs`'" >> /tmp/automatetmp
+    echo "ID='$ID'" >> /tmp/automatetmp
+    echo "REMOTESERVER='$REMOTESERVER'"        >> /tmp/automatetmp
     echo "USER='$USER'"        >> /tmp/automatetmp
     echo "SERVER='$SERVER'"    >> /tmp/automatetmp
     echo "PORT='$PORT'"        >> /tmp/automatetmp
     echo "EXTRA1='$EXTRA1'"    >> /tmp/automatetmp
     echo "EXTRA2='$EXTRA2'"    >> /tmp/automatetmp
     echo "EXTRA3='$EXTRA3'"    >> /tmp/automatetmp
-    cat $RECIPE                >> /tmp/automatetmp
+    cat ${RECIPE}              >> /tmp/automatetmp
     chmod a+x /tmp/automatetmp
 
-    scp -q /tmp/automatetmp $FULLSERVER:/tmp/automatesrv \
-      && ssh $FULLSERVER /tmp/automatesrv
+    eval ${COPYBEFORE} \
+      && scp -q /tmp/automatetmp ${REMOTESERVER}:/tmp/automatesrv \
+      && ssh ${REMOTESERVER} /tmp/automatesrv \
+      && eval ${COPYAFTER}
 
     echo 
     echo "--"
