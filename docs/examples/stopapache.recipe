@@ -1,0 +1,3 @@
+#RECIPE Stop apache servers
+
+apache2ctl stop

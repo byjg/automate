@@ -1,3 +1,0 @@
-#PLUGIN Start the memcached. Remember to stop it before.
-
-memcached -l '$SERVER' -m 256 -u nobody  -r -t 4 -d

@@ -1,3 +1,0 @@
-#PLUGIN Restart apache servers
-
-apache2ctl start

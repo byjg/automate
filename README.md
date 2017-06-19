@@ -1,11 +1,11 @@
-# Automate ByJG 1.1.1
+# Automate ByJG 2.0.0
 
 Native bash script for running scripts across a multiple servers
 
 ## How it works?
 
-Automate run scripts called "plugins" across a multiple servers. 
-Each plugin is created in your local machine and the it is spreaded to all the servers. 
+Automate run scripts called "recipes" across a multiple servers. 
+Each recipe is created in your local machine and the it is spreaded to all the servers. 
 
 ### Install
 
@@ -32,22 +32,22 @@ server.name.com:1100  with-port
 Comments start with a ';'. This file cannot have white spaces. The comments after the server are ignored. 
 They can be used as filter 
 
-### Create your first PLUGIN
+### Create your first RECIPE
 
-A plugin is a regular bash script with the extension ".plugin". This file must reside inside your current folder
+A recipe is a regular bash script with the extension ".recipe". This file must reside inside your current folder
 alongside with the IPs file.
 
-See below an example of the a plugin file called 'showip.plugin':
+See below an example of the a recipe file called 'showip.recipe':
 
 ```bash
-#PLUGIN Show the IP server is currently running and the current ubuntu version
+#RECIPE Show the IP server is currently running and the current ubuntu version
 
 echo "$ID: $USER $SERVER $PORT"
 lsb_release --all
 ```
 
-Note that the first line is nice to have the comment '#PLUGIN' at the very first line. This will be showed when listing all
-plugins. 
+Note that the first line is nice to have the comment '#RECIPE' at the very first line. This will be showed when listing all
+recipes. 
 
 Each script also have five pre-defined variable:
 * $ID: The server ID is the position of the server in the IPs file.
@@ -66,7 +66,7 @@ To run just type:
 automate showip
 ```
 
-where 'showip' is the name of the plugin.
+where 'showip' is the name of the recipe.
 
 ### Running a specific line in the IPs file
 
@@ -88,10 +88,10 @@ automate showip ALL extra1 extra2
 
 ### Setting up environment variable
 
-Automate by default locate the "*.plugin" files at your current directory. You can specify a directory by setting up the
+Automate by default locate the "*.recipe" files at your current directory. You can specify a directory by setting up the
 environment variable `AUTOMATE_WORKDIR` like this:
 
 ```
-AUTOMATE_WORKDIR=/opt/plugindir
+AUTOMATE_WORKDIR=/opt/recipedir
 ```
 

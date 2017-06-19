@@ -1,3 +1,0 @@
-#PLUGIN Stop all memcached servers
-
-killall memcached

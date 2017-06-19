@@ -4,7 +4,7 @@
 ############################################################
 
 echo "----------------------------------------------"
-echo "Automate ByJG v1.1.1"
+echo "Automate ByJG v2.0.0"
 echo "Automate run scripts in a multiple servers"
 echo "----------------------------------------------"
 echo 
@@ -24,26 +24,26 @@ then
     exit 1;
 fi
 
-PLUGIN=$WORKDIR/${1%.*}.plugin
+RECIPE=$WORKDIR/${1%.*}.recipe
 EXECID=$2
 EXTRA1=$3
 EXTRA2=$4
 EXTRA3=$5
 
 # Check if Plugin was passed
-if [ -z "$1" ] || [ ! -r $PLUGIN ]
+if [ -z "$1" ] || [ ! -r $RECIPE ]
 then
     echo "Usage:"
-    echo "   automate PLUGIN-NAME [server-number] [extra1] [extra2] [extra3]"
+    echo "   automate RECIPE-NAME [server-number] [extra1] [extra2] [extra3]"
     echo
     echo "Where:"
     echo "   server-number: The number of the server in the IPs file, or 'ALL' (default)"
-    echo "   extra-n: Extra arguments passed to the plugin script named EXTRA1, EXTRA2 and EXTRA3"
+    echo "   extra-n: Extra arguments passed to the recipe script named EXTRA1, EXTRA2 and EXTRA3"
     echo
-    echo "Available Scripts:"
-    for lista in `ls $WORKDIR/*.plugin`; do
-        pluginame=${lista%.*}
-        echo "   ${pluginame##*/}: "`cat $lista | grep '#PLUGIN' | cut -b 9-`
+    echo "Available Recipes:"
+    for lista in `ls $WORKDIR/*.recipe`; do
+        recipename=${lista%.*}
+        echo "   ${recipename##*/}: "`cat $lista | grep -i '#RECIPE' | cut -b 9-`
     done
     echo
     exit
@@ -82,7 +82,7 @@ do
         SERVER=`echo $FULLSERVER | cut -f2 -d '@'`
     fi
 
-    # Execute PLUGIN
+    # Execute RECIPE
     echo 
     echo "Running Server: " `grep $LINE ${WORKDIR}/IPs`
     echo 
@@ -94,11 +94,11 @@ do
     echo "EXTRA1='$EXTRA1'"    >> /tmp/automatetmp
     echo "EXTRA2='$EXTRA2'"    >> /tmp/automatetmp
     echo "EXTRA3='$EXTRA3'"    >> /tmp/automatetmp
-    cat $PLUGIN                >> /tmp/automatetmp
+    cat $RECIPE                >> /tmp/automatetmp
     chmod a+x /tmp/automatetmp
 
-    scp -q /tmp/automatetmp $FULLSERVER:/tmp/automatesrv && \
-    ssh $FULLSERVER /tmp/automatesrv
+    scp -q /tmp/automatetmp $FULLSERVER:/tmp/automatesrv \
+      && ssh $FULLSERVER /tmp/automatesrv
 
     echo 
     echo "--"

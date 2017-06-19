@@ -1,4 +1,0 @@
-#PLUGIN Show the IP server is currently running and the current ubuntu version
-
-echo "$ID: $SERVER $PORT"
-lsb_release --all
