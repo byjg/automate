@@ -21,11 +21,12 @@ chmod a+x /usr/local/bin/automate
 Once installed the 'automate' you need to create the 'IPs' file with a list of all servers you want to automate. 
 
 ```
-10.10.1.1:2200   COMMENTS OR GROUP
-10.10.1.2   MORE COMMENTS OR GROUP
-;10.10.1.3
-ubuntu@10.10.1.4 
-server.name.com:1100
+10.10.1.1:2200        connection-name
+10.10.1.2             other-name
+;10.10.1.3            commented
+ubuntu@10.10.1.4      with-user-name
+server.name.com:1100  with-port
+
 ```
 
 Comments start with a ';'. This file cannot have white spaces. The comments after the server are ignored. 
