@@ -21,7 +21,7 @@ During this document we'll highlighting the differences and similarity with the 
 The first step is to install 'automate.sh' 
 
 ```
-curl -sS https://raw.githubusercontent.com/byjg/automate/master/automate.sh > /usr/local/bin/automate
+curl -sS https://raw.githubusercontent.com/byjg/automate/master/automate.sh | sudo tee /usr/local/bin/automate > /dev/null
 chmod a+x /usr/local/bin/automate
 ```
 
