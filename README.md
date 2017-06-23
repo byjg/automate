@@ -22,7 +22,7 @@ The first step is to install 'automate.sh'
 
 ```
 curl -sS https://raw.githubusercontent.com/byjg/automate/master/automate.sh | sudo tee /usr/local/bin/automate > /dev/null
-chmod a+x /usr/local/bin/automate
+sudo chmod a+x /usr/local/bin/automate
 ```
 
 ## Define the servers list
