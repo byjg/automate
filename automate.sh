@@ -4,7 +4,7 @@
 ############################################################
 
 echo "----------------------------------------------"
-echo "Automate ByJG v2.0.0"
+echo "Automate ByJG v2.0.1"
 echo "Automate run scripts in a multiple servers"
 echo "----------------------------------------------"
 echo 
