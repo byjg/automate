@@ -90,7 +90,7 @@ do
     fi
 
     COPYAFTER=`cat ${RECIPE} | grep -i "#COPY-AFTER" | cut -c13-`
-    if [ -z "$COPYBEFORE" ]; then
+    if [ -z "$COPYAFTER" ]; then
         COPYAFTER="echo"
     else
         COPYAFTER="echo && echo 'Copying files...' && scp $COPYAFTER && echo 'End copy'"
