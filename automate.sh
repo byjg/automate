@@ -4,7 +4,7 @@
 ############################################################
 
 echo "----------------------------------------------"
-echo "Automate ByJG v2.0.1"
+echo "Automate ByJG v2.0.2"
 echo "Automate run scripts in a multiple servers"
 echo "----------------------------------------------"
 echo 
@@ -96,8 +96,13 @@ do
         COPYAFTER="echo && echo 'Copying files...' && scp $COPYAFTER && echo 'End copy'"
     fi
 
-    ID=`grep $LINE ${WORKDIR}/IPs | cut -d" " -f2- | tr -d '[:space:]'`
+    SSHARGS=`cat ${RECIPE} | grep -i "#SSH-ARGS" | cut -c11-`
+    SSHKEY=`cat ${RECIPE} | grep -i "#SSH-KEY" | cut -c10-`
+    if [ ! -z "$SSHKEY" ]; then
+        SSHKEY="-i $SSHKEY"
+    fi
 
+    ID=`grep $LINE ${WORKDIR}/IPs | cut -d" " -f2- | tr -d '[:space:]'`
 
     echo
     ONLYIFMATCH=`cat ${RECIPE} | grep -i "#ONLY-IF-MATCH" | cut -c16-`
@@ -128,8 +133,8 @@ do
     chmod a+x /tmp/automatetmp
 
     eval ${COPYBEFORE} \
-      && scp -q /tmp/automatetmp ${REMOTESERVER}:/tmp/automatesrv \
-      && ssh ${REMOTESERVER} /tmp/automatesrv \
+      && scp ${SSHKEY} -q /tmp/automatetmp ${REMOTESERVER}:/tmp/automatesrv \
+      && ssh ${SSHKEY} ${SSHARGS} ${REMOTESERVER} /tmp/automatesrv \
       && eval ${COPYAFTER}
 
     echo 

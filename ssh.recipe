@@ -1,0 +1,4 @@
+#RECIPE Connect to SSH to the server
+#SSH-ARGS -t
+
+bash -l

@@ -164,6 +164,22 @@ Copy-After will copy a file or directory using "scp" **after** the end of the re
 This recipe only will be executed if the current server match with the string. 
 This is ideal for avoid running scripts in other servers. 
 
+### #SSH-ARGS arguments
+
+Ssh-args will add extra arguments do the SSH command used to connect to the server.   
+
+```
+#SSH-ARGS -t
+```
+
+### #SSH-KEY /path/to/key
+
+Ssh-key will use the key provided as argument instead to use the system ssh-agent    
+
+```
+#SSH-KEY ~/.ssh/id.rsa
+```
+
 ## Running
 
 To run just type:
