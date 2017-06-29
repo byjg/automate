@@ -10,12 +10,15 @@ SERVER_PATTERN="--YOUR SERVER PATTERN--"
 
 # -- YOU DO NOT NEED CHANGE BELOW HERE
 
+doctl compute droplet list
+doctl auth init
+
 curl -X GET \
     -H 'Content-Type: application/json' \
     -H "Authorization: Bearer $TOKEN" \
     "https://api.digitalocean.com/v2/droplets?page=1&per_page=20" > /tmp/droplets.txt 2> /dev/null
 
-cat /tmp/droplets.txt \ 
+cat /tmp/droplets.txt \
     | jq -c '.droplets[] | {"name": .name, "id": .id, "ip": .networks .v4[0] .ip_address}' \
     | grep $SERVER_PATTERN > /tmp/temp_ip.txt
 
