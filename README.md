@@ -180,6 +180,35 @@ Ssh-key will use the key provided as argument instead to use the system ssh-agen
 #SSH-KEY ~/.ssh/id.rsa
 ```
 
+## Other options
+
+### Auto-generate IP from AWS and Digital Ocean
+
+If your servers are from AWS or Digital Ocean, automate 2.0.x can create the IPs file for you. 
+
+#### Amazon EC2
+
+Just type:
+
+```
+automate get-ip aws > IPs
+```
+
+It is necessary you have the [AWS CLI](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) 
+installed and run the command `aws configure` in order the this working
+
+#### Digital Ocean
+
+Just type:
+
+```
+automate get-ip digitalocean > IPs
+```
+
+It is necessary you have the [Doctl](https://github.com/digitalocean/doctl)
+installed and run the command `doctl auth init` in order the this working
+
+
 ## Running
 
 To run just type:

@@ -113,7 +113,7 @@ automate() {
 }
 
 getAwsIp() {
-    echo Reading from amazon
+    (>&2 echo "Reading from amazon")
 
     RESULT=$( \
         aws ec2 describe-instances --filters "Name=tag:Name,Name=instance-state-name,Values=running" \
@@ -126,8 +126,7 @@ getAwsIp() {
         exit $RETCODE
     fi
 
-    echo Parsing results
-    rm -f IPs
+    (>&2 echo "Parsing results")
     for LINE in $RESULT; do
         if [ -z "$NAME" ]; then
             NAME="$LINE"
@@ -138,21 +137,21 @@ getAwsIp() {
         elif [ -z "$PUBLICIP" ]; then
             PUBLICIP="$LINE"
         else
-            echo "ubuntu@$PUBLICIP public-$NAME $INSTANCE  "  >> IPs
-            echo "ubuntu@$PRIVATEIP private-$NAME $INSTANCE"  >> IPs
+            echo "ubuntu@$PUBLICIP public-$NAME $INSTANCE  "
+            echo "ubuntu@$PRIVATEIP private-$NAME $INSTANCE"
             NAME="$LINE"
             INSTANCE=""
             PRIVATEIP=""
             PUBLICIP=""
         fi
     done
-    echo "ubuntu@$PUBLICIP public-$NAME $INSTANCE  "  >> IPs
-    echo "ubuntu@$PRIVATEIP private-$NAME $INSTANCE"  >> IPs
+    echo "ubuntu@$PUBLICIP public-$NAME $INSTANCE  "
+    echo "ubuntu@$PRIVATEIP private-$NAME $INSTANCE"
     exit
 }
 
 getDigitalOceanIp() {
-    echo Reading from digital ocean
+    (>&2 echo "Reading from digital ocean")
     RESULT=$(doctl compute droplet list -o text --format="Name, Public IPv4, Private IPv4" --no-header)
 
     RETCODE=$?
@@ -161,7 +160,7 @@ getDigitalOceanIp() {
         exit $RETCODE
     fi
 
-    echo Parsing results
+    (>&2 echo "Parsing results")
     rm -f IPs
     for LINE in $RESULT; do
         if [ -z "$NAME" ]; then
@@ -171,15 +170,15 @@ getDigitalOceanIp() {
         elif [ -z "$PRIVATEIP" ]; then
             PRIVATEIP="$LINE"
         else
-            echo "root@$PUBLICIP public-$NAME $INSTANCE  "  >> IPs
-            echo "root@$PRIVATEIP private-$NAME $INSTANCE"  >> IPs
+            echo "root@$PUBLICIP public-$NAME $INSTANCE  "
+            echo "root@$PRIVATEIP private-$NAME $INSTANCE"
             NAME="$LINE"
             PRIVATEIP=""
             PUBLICIP=""
         fi
     done
-    echo "root@$PUBLICIP public-$NAME $INSTANCE  "  >> IPs
-    echo "root@$PRIVATEIP private-$NAME $INSTANCE"  >> IPs
+    echo "root@$PUBLICIP public-$NAME $INSTANCE  "
+    echo "root@$PRIVATEIP private-$NAME $INSTANCE"
     exit
 }
 
@@ -196,16 +195,18 @@ then
     WORKDIR="."
 fi
 
-# --- Check if get aws ip
-if [ "$1" == "get-aws-ip" ]; then
-    header
-    getAwsIp
-fi
-
-# --- Check if get aws ip
-if [ "$1" == "get-digitalocean-ip" ]; then
-    header
-    getDigitalOceanIp
+# --- Get IP
+if [ "$1" == "get-ip" ]; then
+    if [ -z "$2" ]; then
+        echo "ERROR: You need to pass 'aws' or 'digitalocean'"
+    elif [ "$2" ==  "aws" ]; then
+        getAwsIp
+    elif [ "$2" ==  "digitalocean" ]; then
+        getDigitalOceanIp
+    else
+        echo "Unknow '$2'. Try 'aws' or 'digitalocean'."
+    fi
+    exit
 fi
 
 # ---
@@ -225,8 +226,7 @@ then
     header
     echo "Usage:"
     echo "   automate RECIPE-NAME [server-number] [extra1] [extra2] [extra3]"
-    echo "   automate get-aws-ip"
-    echo "   automate get-digitalocean-ip"
+    echo "   automate get-ip <aws|digitalocean>"
     echo
     echo "Where:"
     echo "   server-number: The number of the server in the IPs file, or 'ALL' (default)"
