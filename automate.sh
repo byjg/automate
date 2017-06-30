@@ -5,7 +5,7 @@
 
 header() {
     echo "----------------------------------------------"
-    echo "Automate ByJG v2.0.2"
+    echo "Automate ByJG v2.0.3"
     echo "Automate run scripts in a multiple servers"
     echo "----------------------------------------------"
     echo
@@ -127,7 +127,7 @@ getAwsIp() {
     fi
 
     echo Parsing results
-    rm IPs
+    rm -f IPs
     for LINE in $RESULT; do
         if [ -z "$NAME" ]; then
             NAME="$LINE"
@@ -152,7 +152,34 @@ getAwsIp() {
 }
 
 getDigitalOceanIp() {
+    echo Reading from digital ocean
+    RESULT=$(doctl compute droplet list -o text --format="Name, Public IPv4, Private IPv4" --no-header)
 
+    RETCODE=$?
+    if [ $RETCODE -ne 0 ]; then
+        echo "An error occured. Did you have the doctl and run: 'doctl auth init'? "
+        exit $RETCODE
+    fi
+
+    echo Parsing results
+    rm -f IPs
+    for LINE in $RESULT; do
+        if [ -z "$NAME" ]; then
+            NAME="$LINE"
+        elif [ -z "$PUBLICIP" ]; then
+            PUBLICIP="$LINE"
+        elif [ -z "$PRIVATEIP" ]; then
+            PRIVATEIP="$LINE"
+        else
+            echo "root@$PUBLICIP public-$NAME $INSTANCE  "  >> IPs
+            echo "root@$PRIVATEIP private-$NAME $INSTANCE"  >> IPs
+            NAME="$LINE"
+            PRIVATEIP=""
+            PUBLICIP=""
+        fi
+    done
+    echo "root@$PUBLICIP public-$NAME $INSTANCE  "  >> IPs
+    echo "root@$PRIVATEIP private-$NAME $INSTANCE"  >> IPs
     exit
 }
 
