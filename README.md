@@ -166,7 +166,7 @@ This is ideal for avoid running scripts in other servers.
 
 ### #SSH-ARGS arguments
 
-Ssh-args will add extra arguments do the SSH command used to connect to the server.   
+Ssh-args will add extra arguments do the SSH command used to connect to the server.
 
 ```
 #SSH-ARGS -t
@@ -174,10 +174,18 @@ Ssh-args will add extra arguments do the SSH command used to connect to the serv
 
 ### #SSH-KEY /path/to/key
 
-Ssh-key will use the key provided as argument instead to use the system ssh-agent    
+Ssh-key will use the key provided as argument instead to use the system ssh-agent
 
 ```
 #SSH-KEY ~/.ssh/id.rsa
+```
+
+### #TIMEOUT argument
+
+Defines how much time (in seconds) the SSH will try to connect to the SSH server. 
+
+```
+#TIMEOUT 5
 ```
 
 ## Other options
@@ -219,6 +227,19 @@ automate showip
 
 where 'showip' is the name of the recipe.
 
+After each execution a file '/tmp/automate-result.txt' will be generated with each server as executed
+and the exit status code. If the exit status code is '0' the execution was successfull. 
+
+Example:
+
+```text
+server, status
+10.10.1.1, 0
+10.10.1.2, 0
+ubuntu@10.10.1.4, 0
+server.name.com, 255
+```
+
 ### Running a specific line matching with the comment in the file
 
 ```bash
@@ -230,6 +251,8 @@ automate showip GROUP
 ```bash
 automate showip ALL extra1 extra2
 ```
+
+Inside the recipe you can use the extra parameters accessing the variables $EXTRA1 and $EXTRA2
 
 ### Setting up environment variable
 

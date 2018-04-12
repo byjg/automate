@@ -36,6 +36,7 @@ automate() {
 
 
     # Execute
+    echo "server, status" > /tmp/automate-result.txt
     for LINE in ${TARGET_SERVER[@]}
     do
         # Get Server NAME and PORT
@@ -85,6 +86,14 @@ automate() {
             echo
             continue
         fi
+
+        echo
+        TIMEOUT=`cat ${RECIPE} | grep -i "#TIMEOUT" | cut -c9-`
+        if [ ! -z "$TIMEOUT" ]; then
+            echo "Connection Timeout: $TIMEOUT"
+            TIMEOUT="-o ConnectTimeout="$(echo -e "${TIMEOUT}" | tr -d '[:space:]')" -o ConnectionAttempts=1"
+        fi
+
         echo
 
         # Execute RECIPE
@@ -102,10 +111,16 @@ automate() {
         chmod a+x /tmp/automatetmp
 
         eval ${COPYBEFORE} \
-          && scp ${SSHKEY} -q /tmp/automatetmp ${REMOTESERVER}:/tmp/automatesrv \
-          && ssh ${SSHKEY} ${SSHARGS} ${REMOTESERVER} /tmp/automatesrv \
-          && eval ${COPYAFTER}
+          && scp ${SSHKEY} ${TIMEOUT} -q /tmp/automatetmp ${REMOTESERVER}:/tmp/automatesrv \
+          && ssh ${SSHKEY} ${SSHARGS} ${TIMEOUT} ${REMOTESERVER} /tmp/automatesrv
+	RESULT=$?
+        echo "${REMOTESERVER}, $RESULT" >> /tmp/automate-result.txt
+	if [ "$RESULT" = "0" ]
+	then
+            eval ${COPYAFTER}
+	fi
 
+        rm /tmp/automatetmp
         echo
         echo "--"
 
