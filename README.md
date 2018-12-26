@@ -3,12 +3,12 @@
 A *very* simple script management for automate tasks and run scripts (recipes)
 across a multiple servers
 
-## How it works?
+# How it works?
 
 Automate run scripts called "recipes" across a multiple servers. 
 Each recipe is created in your local machine and the it is spreaded to all the servers.
 
-## Why this is better than ansible, chef and others?
+# Why this is better than ansible, chef and others?
 
 The answer is not "BETTER THAN SOMETHING" but "DIFFERENT WAY TO DO THINGS".
 Ansible and Chef have your own syntax. You have to learn it. 
@@ -16,7 +16,7 @@ Automate just use BASH SCRIPT and there is no other commands.
 
 During this document we'll highlighting the differences and similarity with the ansible and chef. 
 
-## Install
+# Install
 
 The first step is to install 'automate.sh' 
 
@@ -25,7 +25,7 @@ curl -sS https://raw.githubusercontent.com/byjg/automate/master/automate.sh | su
 sudo chmod a+x /usr/local/bin/automate
 ```
 
-## Define the servers list
+# Define the servers list
 
 Once installed the 'automate' you need to create the 'IPs' file with a list of all servers you want to automate.
  
@@ -51,7 +51,7 @@ They can be used as filter
 
 It is important named carefully because you can filter the execution by this name.
 
-#### Note for Ansible Users
+## Note for Ansible Users
 
 Ansible have the inventory and groups of servers. 
 
@@ -94,7 +94,7 @@ automate recipe live
 automate recipe webservers
 ```
 
-## Create your first RECIPE
+# Create your first RECIPE
 
 A recipe is a regular bash script with the extension ".recipe". This file must reside inside your current folder
 alongside with the IPs file.
@@ -119,20 +119,20 @@ Each script also have five pre-defined variable:
 * $EXTRA2: The extra parameter 2
 * $EXTRA3: The extra parameter 3
 
-#### Note for Ansible Users
+## Note for Ansible Users
 
 The Automate Recipe looks like to a Ansible Playbook. Ansible Playbook are a YAML file and are more rich 
 with a lot of useful plugins. Some functions like start a service, notify commands, etc are well defined. 
 As stated in the ansible documentation: "Reading an ansible playbook is easy". Automate recipes are just scripts. 
 Do what you scripted. There is no magic.
 
-## RECIPE commands
+# RECIPE commands
 
 The recipe is PURE bash with some comments and environment variables pre-defined.
 
 The commands are:
 
-### #RECIPE comment
+# #RECIPE comment
 
 It is used only for document your recipe. The syntax is:
 
@@ -142,7 +142,7 @@ It is used only for document your recipe. The syntax is:
 (Your recipe here)
 ```
 
-### #COPY-BEFORE local remote
+# #COPY-BEFORE local remote
 
 Copy-Before will copy a file or directory using "scp" **before** start the recipe. Use the variable 
 $REMOTESERVER to define the remote server. 
@@ -151,7 +151,7 @@ $REMOTESERVER to define the remote server.
 #COPY-BEFORE locafile $REMOTESERVER:remotepath
 ```
 
-### #COPY-AFTER local remote
+# #COPY-AFTER local remote
 
 Copy-After will copy a file or directory using "scp" **after** the end of the recipe execution.
 
@@ -159,12 +159,12 @@ Copy-After will copy a file or directory using "scp" **after** the end of the re
 #COPY-AFTER $REMOTESERVER:remotefile localfile
 ```
 
-### #ONLY-IF-MATCH string
+# #ONLY-IF-MATCH string
 
 This recipe only will be executed if the current server match with the string. 
 This is ideal for avoid running scripts in other servers. 
 
-### #SSH-ARGS arguments
+# #SSH-ARGS arguments
 
 Ssh-args will add extra arguments do the SSH command used to connect to the server.
 
@@ -172,7 +172,7 @@ Ssh-args will add extra arguments do the SSH command used to connect to the serv
 #SSH-ARGS -t
 ```
 
-### #SSH-KEY /path/to/key
+# #SSH-KEY /path/to/key
 
 Ssh-key will use the key provided as argument instead to use the system ssh-agent
 
@@ -180,7 +180,7 @@ Ssh-key will use the key provided as argument instead to use the system ssh-agen
 #SSH-KEY ~/.ssh/id.rsa
 ```
 
-### #TIMEOUT argument
+# #TIMEOUT argument
 
 Defines how much time (in seconds) the SSH will try to connect to the SSH server. 
 
@@ -188,13 +188,13 @@ Defines how much time (in seconds) the SSH will try to connect to the SSH server
 #TIMEOUT 5
 ```
 
-## Other options
+# Other options
 
-### Auto-generate IP from AWS and Digital Ocean
+## Auto-generate IP from AWS and Digital Ocean
 
 If your servers are from AWS or Digital Ocean, automate 2.0.x can create the IPs file for you. 
 
-#### Amazon EC2
+## Amazon EC2
 
 Just type:
 
@@ -205,7 +205,7 @@ automate get-ip aws > IPs
 It is necessary you have the [AWS CLI](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) 
 installed and run the command `aws configure` in order the this working
 
-#### Digital Ocean
+## Digital Ocean
 
 Just type:
 
@@ -217,7 +217,7 @@ It is necessary you have the [Doctl](https://github.com/digitalocean/doctl)
 installed and run the command `doctl auth init` in order the this working
 
 
-## Running
+# Running
 
 To run just type:
 
@@ -240,13 +240,13 @@ ubuntu@10.10.1.4, 0
 server.name.com, 255
 ```
 
-### Running a specific line matching with the comment in the file
+# Running a specific line matching with the comment in the file
 
 ```bash
 automate showip GROUP
 ```
 
-### Running ALL servers and passing EXTRA parameters
+# Running ALL servers and passing EXTRA parameters
 
 ```bash
 automate showip ALL extra1 extra2
@@ -254,7 +254,7 @@ automate showip ALL extra1 extra2
 
 Inside the recipe you can use the extra parameters accessing the variables $EXTRA1 and $EXTRA2
 
-### Setting up environment variable
+# Setting up environment variable
 
 Automate by default locate the "*.recipe" files at your current directory. You can specify a directory by setting up the
 environment variable `AUTOMATE_WORKDIR` like this:
